@@ -1,29 +1,62 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
-declare global {
-interface Window {
-Telegram?: {
-WebApp: {
-initData: string;
-ready: () => void;
-expand: () => void;
+type Dashboard = {
+  profile: { name: string | null; referralCode: string; clicks: number };
+  referralUrl: string | null;
+  offers: { id: string; name: string }[];
+  isAdmin: boolean;
 };
-};
-}
-}
 
 export default function Home() {
-const [data, setData] = useState<any>(null);
+const [data, setData] = useState<Dashboard | null>(null);
 const [error, setError] = useState("");
+const [actionStatus, setActionStatus] = useState("");
+const [opening, setOpening] = useState(false);
+
+async function openOffer(offerId: string) {
+  const app = window.Telegram?.WebApp;
+  if (!app || opening) return;
+
+  setOpening(true);
+  setActionStatus("");
+  try {
+    const response = await fetch("/api/clicks", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ initData: app.initData, offerId }),
+    });
+    if (!response.ok) throw new Error("Click request failed");
+    const { url, creditedToViewer } = await response.json();
+    if (creditedToViewer) {
+      setData(current => current && ({
+        ...current, profile: { ...current.profile, clicks: current.profile.clicks + 1 }
+      }));
+    }
+    app.openLink(url);
+  } catch {
+    setActionStatus("Nem sikerült megnyitni az ajánlatot.");
+  } finally {
+    setOpening(false);
+  }
+}
+
+async function copyReferral(url: string) {
+  try {
+    await navigator.clipboard.writeText(url);
+    setActionStatus("Ajánlói link másolva.");
+  } catch {
+    setActionStatus("Jelöld ki és másold ki az ajánlói linket.");
+  }
+}
 
 useEffect(() => {
 const init = async () => {
 const tg = window.Telegram?.WebApp;
 
 
-JavaScript
   if (!tg?.initData) {
     setError("Nyisd meg a NiceWins alkalmazást Telegramon keresztül.");
     return;
@@ -60,9 +93,6 @@ if (!data) {
 return <main style={{ padding: 30 }}>NiceWins betöltése...</main>;
 }
 
-const referralUrl =
-${window.location.origin}/?ref=${data.profile.referralCode};
-
 return (
 <main style={{ maxWidth: 520, margin: "auto", padding: 22 }}>
 <header style={{ marginBottom: 30 }}>
@@ -73,7 +103,6 @@ return (
 </header>
 
 
-TypeScript
   <section style={card}>
     <p style={{ color: "#AAB9C6" }}>Saját kattintásaid</p>
     <h1 style={{ fontSize: 38 }}>
@@ -84,29 +113,37 @@ TypeScript
   <section style={{ ...card, marginTop: 15 }}>
     <h3>Saját ajánlókód</h3>
     <p>{data.profile.referralCode}</p>
-    <button
-      onClick={() => navigator.clipboard.writeText(referralUrl)}
-      style={button}
-    >
-      Ajánlói link másolása
-    </button>
+    {data.referralUrl ? (
+      <>
+        <input aria-label="Ajánlói link" value={data.referralUrl} readOnly
+          onFocus={event => event.currentTarget.select()} />
+        <button onClick={() => copyReferral(data.referralUrl!)} style={button}>
+          Ajánlói link másolása
+        </button>
+      </>
+    ) : <p>Az ajánlói link még nincs beállítva.</p>}
   </section>
 
   <h2 style={{ marginTop: 30 }}>Affiliate ajánlatok</h2>
 
-  {data.offers.map((offer: any) => (
+  {actionStatus && <p role="status">{actionStatus}</p>}
+  {data.offers.length === 0 && <p>Jelenleg nincs aktív ajánlat.</p>}
+
+  {data.offers.map((offer) => (
     <section key={offer.id} style={card}>
       <h3>{offer.name}</h3>
-      <p>Részletek és ajánlati feltételek</p>
+      <button disabled={opening} onClick={() => openOffer(offer.id)} style={button}>
+        Ajánlat megnyitása
+      </button>
     </section>
   ))}
 
   {data.isAdmin && (
     <section style={{ ...card, marginTop: 20 }}>
       <h2>Adminisztráció</h2>
-      <a href="/admin" style={button}>
+      <Link href="/admin" style={button}>
         Admin felület megnyitása
-      </a>
+      </Link>
     </section>
   )}
 
