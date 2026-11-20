@@ -2,15 +2,6 @@
 
 import { useEffect, useState } from "react";
 
-declare global {
-interface Window {
-Telegram?: {
-WebApp: {
-initData: string;
-};
-};
-}
-}
 
 export default function AdminPage() {
 const [data, setData] = useState<any>(null);
@@ -21,7 +12,6 @@ async function load() {
 const initData = window.Telegram?.WebApp?.initData;
 
 
-JavaScript
   if (!initData) {
     setError("Nyisd meg Telegramon keresztül.");
     return;
@@ -59,7 +49,6 @@ return (
 <h1>NiceWins Admin</h1>
 
 
-TypeScript
   <section style={card}>
     <p>Összes partner</p>
     <h1>{data.partners}</h1>
