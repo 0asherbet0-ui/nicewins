@@ -4,7 +4,7 @@ import { createHmac, timingSafeEqual } from "crypto";
 export function verifyTelegram(initData: string) {
   const token = process.env.TELEGRAM_BOT_TOKEN;
 
-  if (!token || !initData) {
+  if (!token || typeof initData !== "string" || !initData) {
     throw new Error("Missing Telegram credentials");
   }
 
@@ -60,5 +60,5 @@ export function verifyTelegram(initData: string) {
     throw new Error("Invalid Telegram user");
   }
 
-  return user;
+  return { ...user, startParam: params.get("start_param") };
 }
