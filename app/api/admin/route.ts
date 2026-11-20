@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db, ADMIN_ID } from "@/lib/server";
-import { verifyTelegram } from "@/lib/telegram";
+import { getDb, ADMIN_ID } from "../../../lib/server";
+import { verifyTelegram } from "../../../lib/telegram";
 
 export const runtime = "nodejs";
 
@@ -10,7 +10,6 @@ const { initData } = await req.json();
 const user = verifyTelegram(initData);
 
 
-TypeScript
 if (String(user.id) !== ADMIN_ID) {
   return NextResponse.json(
     { error: "Admin access denied" },
@@ -18,6 +17,7 @@ if (String(user.id) !== ADMIN_ID) {
   );
 }
 
+const db = getDb();
 const { data: offers, error } = await db
   .from("offers")
   .select("id,name,active");
