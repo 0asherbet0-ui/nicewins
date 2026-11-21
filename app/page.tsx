@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const offerLogos: Partial<Record<string, string>> = {
-  "winspirit": "https://ised-isde.canada.ca/cipo/trademark-search/media/2400613.png",
-  "slotoro": "https://najlepszekasynoonline.com.pl/img/logo/slotoro-logo.webp",
+  "winspirit": "/logos/winspirit.webp",
+  "slotoro": "/logos/slotoro.webp",
   "coldbet": "/logos/coldbet.webp"
 };
 
@@ -126,8 +126,7 @@ Welcome, {data.profile.name || "Partner"}!
         <img
           src={offerLogos[offer.id]}
           alt=""
-          referrerPolicy="no-referrer"
-          style={offerLogo}
+          style={{ ...offerLogo, objectFit: offer.id === "coldbet" ? "contain" : "cover", padding: offer.id === "coldbet" ? 8 : 0 }}
           onError={event => { event.currentTarget.style.visibility = "hidden"; }}
         />
       )}
@@ -190,7 +189,11 @@ const offerLogo: React.CSSProperties = {
   display: "block",
   width: "100%",
   maxWidth: 220,
-  height: 96,
+  height: 100,
+  boxSizing: "border-box",
+  padding: 8,
+  borderRadius: 12,
+  background: "#131F2C",
   objectFit: "contain",
   justifySelf: "center",
 };
