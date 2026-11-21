@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 const offerLogos: Partial<Record<string, string>> = {
   "winspirit": "https://ised-isde.canada.ca/cipo/trademark-search/media/2400613.png",
   "slotoro": "https://najlepszekasynoonline.com.pl/img/logo/slotoro-logo.webp",
-  "coldbet": "https://brazil-coldbet.net/assets/img/coldbet-logo.webp"
+  "coldbet": "/logos/coldbet.webp"
 };
 
 type Dashboard = {
