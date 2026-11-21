@@ -103,6 +103,20 @@ Welcome, {data.profile.name || "Partner"}!
 </header>
 
 
+  <h2 style={{ marginTop: 30 }}>Affiliate offers</h2>
+
+  {actionStatus && <p role="status">{actionStatus}</p>}
+  {data.offers.length === 0 && <p>There are no active offers right now.</p>}
+
+  {data.offers.map((offer) => (
+    <section key={offer.id} style={card}>
+      <h3>{offer.name}</h3>
+      <button disabled={opening} onClick={() => openOffer(offer.id)} style={button}>
+        Open offer
+      </button>
+    </section>
+  ))}
+
   <section style={card}>
     <p style={{ color: "#AAB9C6" }}>Clicks credited to you</p>
     <h1 style={{ fontSize: 38 }}>
@@ -123,20 +137,6 @@ Welcome, {data.profile.name || "Partner"}!
       </>
     ) : <p>Your referral link isn't available yet.</p>}
   </section>
-
-  <h2 style={{ marginTop: 30 }}>Affiliate offers</h2>
-
-  {actionStatus && <p role="status">{actionStatus}</p>}
-  {data.offers.length === 0 && <p>There are no active offers right now.</p>}
-
-  {data.offers.map((offer) => (
-    <section key={offer.id} style={card}>
-      <h3>{offer.name}</h3>
-      <button disabled={opening} onClick={() => openOffer(offer.id)} style={button}>
-        Open offer
-      </button>
-    </section>
-  ))}
 
   {data.isAdmin && (
     <section style={{ ...card, marginTop: 20 }}>
