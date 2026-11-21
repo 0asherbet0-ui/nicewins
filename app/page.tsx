@@ -20,6 +20,7 @@ export default function Home() {
 const [data, setData] = useState<Dashboard | null>(null);
 const [error, setError] = useState("");
 const [actionStatus, setActionStatus] = useState("");
+const [referralStatus, setReferralStatus] = useState("");
 const [opening, setOpening] = useState(false);
 
 async function openOffer(offerId: string) {
@@ -52,9 +53,9 @@ async function openOffer(offerId: string) {
 async function copyReferral(url: string) {
   try {
     await navigator.clipboard.writeText(url);
-    setActionStatus("Referral link copied.");
+    setReferralStatus("Referral link copied.");
   } catch {
-    setActionStatus("Select and copy the referral link.");
+    setReferralStatus("Select and copy the referral link.");
   }
 }
 
@@ -155,6 +156,9 @@ Welcome, {data.profile.name || "Partner"}!
         <button onClick={() => copyReferral(data.referralUrl!)} style={button}>
           Copy referral link
         </button>
+        <div role="status" style={{ marginTop: referralStatus ? 8 : 0 }}>
+          {referralStatus}
+        </div>
       </>
     ) : <p>Your referral link isn't available yet.</p>}
   </section>
