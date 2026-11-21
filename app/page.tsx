@@ -3,6 +3,12 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+const offerLogos: Partial<Record<string, string>> = {
+  "winspirit": "https://ised-isde.canada.ca/cipo/trademark-search/media/2400613.png",
+  "slotoro": "https://najlepszekasynoonline.com.pl/img/logo/slotoro-logo.webp",
+  "coldbet": "https://brazil-coldbet.net/assets/img/coldbet-logo.webp"
+};
+
 type Dashboard = {
   profile: { name: string | null; referralCode: string; clicks: number };
   referralUrl: string | null;
@@ -109,11 +115,22 @@ Welcome, {data.profile.name || "Partner"}!
   {data.offers.length === 0 && <p>There are no active offers right now.</p>}
 
   {data.offers.map((offer) => (
-    <section key={offer.id} style={card}>
-      <h3>{offer.name}</h3>
-      <button disabled={opening} onClick={() => openOffer(offer.id)} style={button}>
-        Open offer
-      </button>
+    <section key={offer.id} style={offerCard}>
+      <div>
+        <h3>{offer.name}</h3>
+        <button disabled={opening} onClick={() => openOffer(offer.id)} style={button}>
+          Open offer
+        </button>
+      </div>
+      {offerLogos[offer.id] && (
+        <img
+          src={offerLogos[offer.id]}
+          alt=""
+          referrerPolicy="no-referrer"
+          style={offerLogo}
+          onError={event => { event.currentTarget.style.visibility = "hidden"; }}
+        />
+      )}
     </section>
   ))}
 
@@ -159,6 +176,23 @@ background: "#1C2937",
 padding: 20,
 borderRadius: 14,
 marginBottom: 14
+};
+
+const offerCard: React.CSSProperties = {
+  ...card,
+  display: "grid",
+  gridTemplateColumns: "auto minmax(0, 1fr)",
+  alignItems: "center",
+  gap: 12,
+};
+
+const offerLogo: React.CSSProperties = {
+  display: "block",
+  width: "100%",
+  maxWidth: 220,
+  height: 96,
+  objectFit: "contain",
+  justifySelf: "center",
 };
 
 const button: React.CSSProperties = {
