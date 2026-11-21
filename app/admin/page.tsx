@@ -16,7 +16,7 @@ type AdminStats = {
 
 export default function AdminPage() {
 const [data, setData] = useState<AdminStats | null>(null);
-const [error, setError] = useState("Betöltés...");
+const [error, setError] = useState("Loading…");
 
 useEffect(() => {
 async function load() {
@@ -24,7 +24,7 @@ const initData = window.Telegram?.WebApp?.initData;
 
 
   if (!initData) {
-    setError("Nyisd meg Telegramon keresztül.");
+    setError("Open NiceWins in Telegram.");
     return;
   }
 
@@ -42,7 +42,7 @@ const initData = window.Telegram?.WebApp?.initData;
     setData(result);
     setError("");
   } catch {
-    setError("Az adminstatisztikák betöltése nem sikerült.");
+    setError("Couldn't load the admin statistics.");
   }
 }
 
@@ -53,7 +53,7 @@ if (error) {
 return <main style={{ padding: 25 }}>{error}</main>;
 }
 
-if (!data) return <main style={{ padding: 25 }}>Betöltés...</main>;
+if (!data) return <main style={{ padding: 25 }}>Loading…</main>;
 
 const { opens, clicks } = data.campaigns;
 const campaigns = Array.from(new Set([...opens, ...clicks].map(row => row.campaign))).sort();
@@ -64,27 +64,27 @@ return (
 
 
   <section style={card}>
-    <p>Összes partner</p>
+    <p>Total partners</p>
     <h1>{data.partners}</h1>
   </section>
 
-  <h2>Affiliate statisztikák</h2>
+  <h2>Affiliate statistics</h2>
 
   {data.offers.map((offer) => (
     <section key={offer.id} style={card}>
       <h3>{offer.name}</h3>
-      <p>Kattintások: {offer.clicks}</p>
-      <p>Állapot: {offer.active ? "Aktív" : "Inaktív"}</p>
+      <p>Clicks: {offer.clicks}</p>
+      <p>Status: {offer.active ? "Active" : "Inactive"}</p>
     </section>
   ))}
 
-  <h2>Telegram-posztok statisztikái</h2>
-  {campaigns.length === 0 && <p>Még nincs mért kampányforgalom.</p>}
+  <h2>Telegram post statistics</h2>
+  {campaigns.length === 0 && <p>No campaign traffic has been recorded yet.</p>}
   {campaigns.map(campaign => (
     <section key={campaign} style={card}>
       <h3>{campaign}</h3>
-      <p>Appmegnyitások: {opens.find(row => row.campaign === campaign)?.count ?? 0}</p>
-      <p>Ajánlatkattintások:</p>
+      <p>App opens: {opens.find(row => row.campaign === campaign)?.count ?? 0}</p>
+      <p>Offer clicks:</p>
       <ul>
         {data.offers.map(offer => (
           <li key={offer.id}>

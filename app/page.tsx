@@ -37,7 +37,7 @@ async function openOffer(offerId: string) {
     }
     app.openLink(url);
   } catch {
-    setActionStatus("Nem sikerült megnyitni az ajánlatot.");
+    setActionStatus("Couldn't open the offer.");
   } finally {
     setOpening(false);
   }
@@ -46,9 +46,9 @@ async function openOffer(offerId: string) {
 async function copyReferral(url: string) {
   try {
     await navigator.clipboard.writeText(url);
-    setActionStatus("Ajánlói link másolva.");
+    setActionStatus("Referral link copied.");
   } catch {
-    setActionStatus("Jelöld ki és másold ki az ajánlói linket.");
+    setActionStatus("Select and copy the referral link.");
   }
 }
 
@@ -58,7 +58,7 @@ const tg = window.Telegram?.WebApp;
 
 
   if (!tg?.initData) {
-    setError("Nyisd meg a NiceWins alkalmazást Telegramon keresztül.");
+    setError("Open NiceWins in Telegram.");
     return;
   }
 
@@ -78,7 +78,7 @@ const tg = window.Telegram?.WebApp;
 
     setData(result);
   } catch {
-    setError("Nem sikerült a belépés. Próbáld újra.");
+    setError("Couldn't sign in. Please try again.");
   }
 };
 
@@ -90,7 +90,7 @@ return <main style={{ padding: 30 }}>{error}</main>;
 }
 
 if (!data) {
-return <main style={{ padding: 30 }}>NiceWins betöltése...</main>;
+return <main style={{ padding: 30 }}>Loading NiceWins…</main>;
 }
 
 return (
@@ -98,58 +98,57 @@ return (
 <header style={{ marginBottom: 30 }}>
 <h1 style={{ fontSize: 32 }}>NiceWins</h1>
 <p style={{ color: "#9EAFBE" }}>
-Üdvözlünk, {data.profile.name || "Partner"}!
+Welcome, {data.profile.name || "Partner"}!
 </p>
 </header>
 
 
   <section style={card}>
-    <p style={{ color: "#AAB9C6" }}>Saját kattintásaid</p>
+    <p style={{ color: "#AAB9C6" }}>Clicks credited to you</p>
     <h1 style={{ fontSize: 38 }}>
       {data.profile.clicks}
     </h1>
   </section>
 
   <section style={{ ...card, marginTop: 15 }}>
-    <h3>Saját ajánlókód</h3>
+    <h3>Your referral code</h3>
     <p>{data.profile.referralCode}</p>
     {data.referralUrl ? (
       <>
-        <input aria-label="Ajánlói link" value={data.referralUrl} readOnly
+        <input aria-label="Referral link" value={data.referralUrl} readOnly
           onFocus={event => event.currentTarget.select()} />
         <button onClick={() => copyReferral(data.referralUrl!)} style={button}>
-          Ajánlói link másolása
+          Copy referral link
         </button>
       </>
-    ) : <p>Az ajánlói link még nincs beállítva.</p>}
+    ) : <p>Your referral link isn't available yet.</p>}
   </section>
 
-  <h2 style={{ marginTop: 30 }}>Affiliate ajánlatok</h2>
+  <h2 style={{ marginTop: 30 }}>Affiliate offers</h2>
 
   {actionStatus && <p role="status">{actionStatus}</p>}
-  {data.offers.length === 0 && <p>Jelenleg nincs aktív ajánlat.</p>}
+  {data.offers.length === 0 && <p>There are no active offers right now.</p>}
 
   {data.offers.map((offer) => (
     <section key={offer.id} style={card}>
       <h3>{offer.name}</h3>
       <button disabled={opening} onClick={() => openOffer(offer.id)} style={button}>
-        Ajánlat megnyitása
+        Open offer
       </button>
     </section>
   ))}
 
   {data.isAdmin && (
     <section style={{ ...card, marginTop: 20 }}>
-      <h2>Adminisztráció</h2>
+      <h2>Administration</h2>
       <Link href="/admin" style={button}>
-        Admin felület megnyitása
+        Open admin dashboard
       </Link>
     </section>
   )}
 
   <footer style={{ color: "#8293A2", marginTop: 35, fontSize: 12 }}>
-    18+ · Felelős játék · Az ajánlatok elérhetősége és jogszerűsége
-    országonként eltérhet.
+    18+ · Play responsibly · Offer availability and legal restrictions vary by country.
   </footer>
 </main>
 );
