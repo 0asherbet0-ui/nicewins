@@ -126,7 +126,12 @@ Welcome, {data.profile.name || "Partner"}!
         <img
           src={offerLogos[offer.id]}
           alt=""
-          style={{ ...offerLogo, background: offer.id === "winspirit" ? "#61049D" : offer.id === "slotoro" ? "#43043F" : offerLogo.background, padding: offer.id === "coldbet" ? 8 : 0 }}
+          style={{
+            ...offerLogo,
+            objectFit: offer.id === "winspirit" ? "cover" : offerLogo.objectFit,
+            background: offer.id === "slotoro" ? "#43043F" : offerLogo.background,
+            padding: offer.id === "coldbet" ? 8 : 0,
+          }}
           onError={event => { event.currentTarget.style.visibility = "hidden"; }}
         />
       )}
