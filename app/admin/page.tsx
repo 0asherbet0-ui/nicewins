@@ -3,8 +3,19 @@
 import { useEffect, useState } from "react";
 
 
+type CampaignStats = {
+  opens: { campaign: string; count: number }[];
+  clicks: { campaign: string; offer_id: string; name: string; count: number }[];
+};
+
+type AdminStats = {
+  partners: number;
+  offers: { id: string; name: string; active: boolean; clicks: number }[];
+  campaigns: CampaignStats;
+};
+
 export default function AdminPage() {
-const [data, setData] = useState<any>(null);
+const [data, setData] = useState<AdminStats | null>(null);
 const [error, setError] = useState("Betöltés...");
 
 useEffect(() => {
@@ -31,7 +42,7 @@ const initData = window.Telegram?.WebApp?.initData;
     setData(result);
     setError("");
   } catch {
-    setError("Nincs adminisztrátori hozzáférés.");
+    setError("Az adminstatisztikák betöltése nem sikerült.");
   }
 }
 
@@ -43,6 +54,9 @@ return <main style={{ padding: 25 }}>{error}</main>;
 }
 
 if (!data) return <main style={{ padding: 25 }}>Betöltés...</main>;
+
+const { opens, clicks } = data.campaigns;
+const campaigns = Array.from(new Set([...opens, ...clicks].map(row => row.campaign))).sort();
 
 return (
 <main style={{ maxWidth: 520, margin: "auto", padding: 22 }}>
@@ -56,17 +70,30 @@ return (
 
   <h2>Affiliate statisztikák</h2>
 
-  {data.offers.map((offer: any) => (
-    <section key={offer.name} style={card}>
+  {data.offers.map((offer) => (
+    <section key={offer.id} style={card}>
       <h3>{offer.name}</h3>
       <p>Kattintások: {offer.clicks}</p>
       <p>Állapot: {offer.active ? "Aktív" : "Inaktív"}</p>
     </section>
   ))}
 
-  <p style={{ color: "#9EAFBE", fontSize: 12 }}>
-    NiceWins Admin
-  </p>
+  <h2>Telegram-posztok statisztikái</h2>
+  {campaigns.length === 0 && <p>Még nincs mért kampányforgalom.</p>}
+  {campaigns.map(campaign => (
+    <section key={campaign} style={card}>
+      <h3>{campaign}</h3>
+      <p>Appmegnyitások: {opens.find(row => row.campaign === campaign)?.count ?? 0}</p>
+      <p>Ajánlatkattintások:</p>
+      <ul>
+        {data.offers.map(offer => (
+          <li key={offer.id}>
+            {offer.name} — {clicks.find(row => row.campaign === campaign && row.offer_id === offer.id)?.count ?? 0}
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))}
 </main>
 );
 }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "../../../lib/server";
+import { campaignFromStartParam } from "../../../lib/campaign";
 import { verifyTelegram } from "../../../lib/telegram";
 
 export const runtime = "nodejs";
@@ -38,6 +39,7 @@ export async function POST(req: NextRequest) {
 
     const click = await db.from("clicks").insert({
       offer_id: offerId,
+      campaign: campaignFromStartParam(user.startParam),
       partner_telegram_id: profile.data.referred_by ?? telegramId,
     });
     if (click.error) throw click.error;

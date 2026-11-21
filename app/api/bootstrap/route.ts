@@ -1,14 +1,17 @@
 import { randomBytes } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { ADMIN_ID, getDb } from "../../../lib/server";
+import { campaignFromStartParam } from "../../../lib/campaign";
 import { verifyTelegram } from "../../../lib/telegram";
 
 export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   let user;
+  let initData: string;
   try {
-    user = verifyTelegram((await req.json()).initData);
+    ({ initData } = await req.json());
+    user = verifyTelegram(initData);
   } catch {
     return NextResponse.json({ error: "Telegram authentication failed" }, { status: 401 });
   }
@@ -52,6 +55,16 @@ export async function POST(req: NextRequest) {
     ]);
     if (offers.error) throw offers.error;
     if (clicks.error) throw clicks.error;
+
+    const campaign = campaignFromStartParam(user.startParam);
+    if (campaign) {
+      const launchId = new URLSearchParams(initData).get("hash")!.toLowerCase();
+      const opening = await db.from("campaign_opens").upsert(
+        { campaign, launch_id: launchId },
+        { onConflict: "launch_id", ignoreDuplicates: true },
+      );
+      if (opening.error) throw opening.error;
+    }
 
     const miniAppUrl = process.env.TELEGRAM_MINI_APP_URL?.trim();
     const referralUrl = miniAppUrl

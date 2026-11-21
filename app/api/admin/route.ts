@@ -33,6 +33,7 @@ for (const offer of offers ?? []) {
     .eq("offer_id", offer.id);
 
   stats.push({
+    id: offer.id,
     name: offer.name,
     active: offer.active,
     clicks: count ?? 0
@@ -43,7 +44,13 @@ const { count: partners } = await db
   .from("profiles")
   .select("*", { count: "exact", head: true });
 
+const campaigns = await db.rpc("nicewins_campaign_stats");
+if (campaigns.error) {
+  return NextResponse.json({ error: "Campaign stats unavailable" }, { status: 500 });
+}
+
 return NextResponse.json({
+  campaigns: campaigns.data,
   partners: partners ?? 0,
   offers: stats
 });
