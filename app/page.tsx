@@ -110,7 +110,7 @@ Welcome, {data.profile.name || "Partner"}!
 </header>
 
 
-  <h2 style={{ marginTop: 30 }}>Affiliate offers</h2>
+  <h2 style={{ marginTop: 30 }}>The best casinos</h2>
 
   {actionStatus && <p role="status">{actionStatus}</p>}
   {data.offers.length === 0 && <p>There are no active offers right now.</p>}
