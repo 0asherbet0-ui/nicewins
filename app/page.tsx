@@ -146,11 +146,11 @@ Welcome, {data.profile.name || "Partner"}!
   </section>
 
   <section style={{ ...card, marginTop: 15 }}>
-    <h3>Your referral code</h3>
-    <p>{data.profile.referralCode}</p>
+    <h3>Your referral link</h3>
     {data.referralUrl ? (
       <>
         <input aria-label="Referral link" value={data.referralUrl} readOnly
+          style={{ display: "block", width: "100%", boxSizing: "border-box", marginBottom: 12 }}
           onFocus={event => event.currentTarget.select()} />
         <button onClick={() => copyReferral(data.referralUrl!)} style={button}>
           Copy referral link
