@@ -37,22 +37,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid offer URL" }, { status: 500 });
     }
 
-    const campaign = campaignFromStartParam(user.startParam);
     const click = await db.from("clicks").insert({
       offer_id: offerId,
-      campaign,
+      campaign: campaignFromStartParam(user.startParam),
       partner_telegram_id: profile.data.referred_by ?? telegramId,
-    }).select("click_id").single();
+    });
     if (click.error) throw click.error;
-
-    if (offerId === "slotoro") {
-      if (url.searchParams.get("sub_id") === "{sub_id_1}") {
-        url.searchParams.set("sub_id", campaign ?? "tg_direct");
-      }
-      if (url.searchParams.get("click_id") === "{click_id}") {
-        url.searchParams.set("click_id", click.data.click_id);
-      }
-    }
 
     return NextResponse.json({ url: url.href, creditedToViewer: profile.data.referred_by == null });
   } catch {
