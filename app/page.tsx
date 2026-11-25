@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import DailyRewards from "./rewards";
-import BonusTerms from "./bonus-terms";
+import OfferInfo from "./bonus-terms";
 import { useEffect, useState } from "react";
 
 const offerLogos: Partial<Record<string, string>> = {
@@ -161,8 +161,8 @@ Welcome, {data.profile.name || "Partner"}!
             : { ...current, [offer.id]: open });
         }}
         style={{ gridColumn: "1 / -1", borderTop: "1px solid #425566", paddingTop: 12 }}>
-        <summary style={{ cursor: "pointer" }}>Bonus terms</summary>
-        <BonusTerms offerId={offer.id} />
+        <summary style={{ cursor: "pointer" }}>More Info</summary>
+        <OfferInfo offerId={offer.id} />
       </details>
     </section>
   ))}
