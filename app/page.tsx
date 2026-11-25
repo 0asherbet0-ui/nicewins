@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import DailyRewards from "./rewards";
 import { useEffect, useState } from "react";
 
 const offerLogos: Partial<Record<string, string>> = {
@@ -109,6 +110,8 @@ Welcome, {data.profile.name || "Partner"}!
 </p>
 </header>
 
+
+  <DailyRewards />
 
   <h2 style={{ marginTop: 30 }}>The best casinos</h2>
 
