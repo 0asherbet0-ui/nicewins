@@ -44,22 +44,61 @@
   cursor: wait;
 }
 
-.ticket {
-  display: grid;
-  place-items: center;
+.wheelFrame {
   position: relative;
-  background: #101c29;
-  color: #f3d48d;
-  border-radius: 10px;
-  aspect-ratio: 320 / 112;
-  margin-bottom: 12px;
-  overflow: hidden;
+  width: min(100%, 264px);
+  margin: 12px auto;
+  padding-top: 9px;
 }
 
-.ticket canvas {
+.wheel {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 4px solid #eacb81;
+  background: conic-gradient(
+    #177758 0 65%,
+    #285278 65% 90%,
+    #966321 90% 100%
+  );
+  box-shadow: 0 4px 18px #09131e;
+}
+
+.wheel::after {
+  content: "";
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  touch-action: none;
+  width: 9%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #eacb81;
+  box-shadow: 0 0 0 3px #1c2937;
+}
+
+.pointer {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  z-index: 1;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 24px solid #ffe7a7;
+  filter: drop-shadow(0 2px 2px #09131e);
+}
+
+.wheelLabel {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 18%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  font-weight: 800;
+  font-size: clamp(.875rem, 5vw, 1.2rem);
+}
+
+.odds {
+  text-align: center;
+  font-size: .875rem;
 }
