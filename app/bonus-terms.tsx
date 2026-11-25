@@ -1,6 +1,6 @@
 const detailsByOffer: Partial<Record<string, { minimum: string; methods: string; bonus?: string }>> = {
   winspirit: {
-    minimum: "20 $ or €",
+    minimum: "20 €",
     methods: "Visa, Mastercard or Crypto",
     bonus: "100% for the 1st deposit + 100 FS",
   },
