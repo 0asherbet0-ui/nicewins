@@ -49,11 +49,14 @@ if (campaigns.error) {
   return NextResponse.json({ error: "Campaign stats unavailable" }, { status: 500 });
 }
 
+const points = await db.rpc("nicewins_admin_points");
+
 return NextResponse.json({
+  points: points.error ? null : points.data,
   campaigns: campaigns.data,
   partners: partners ?? 0,
   offers: stats
-});
+}, { headers: { "Cache-Control": "no-store" } });
 } catch {
 return NextResponse.json(
 { error: "Unauthorized" },
