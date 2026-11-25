@@ -126,8 +126,6 @@ Welcome, {data.profile.name || "Partner"}!
 </header>
 
 
-  <DailyRewards />
-
   <h2 style={{ marginTop: 30 }}>The best casinos</h2>
 
   {actionStatus && <p role="status">{actionStatus}</p>}
@@ -201,6 +199,8 @@ Welcome, {data.profile.name || "Partner"}!
       </Link>
     </section>
   )}
+
+  <DailyRewards />
 
   <footer style={{ color: "#8293A2", marginTop: 35, fontSize: 12 }}>
     18+ · Play responsibly · Offer availability and legal restrictions vary by country.
