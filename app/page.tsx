@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import DailyRewards from "./rewards";
+import BonusTerms from "./bonus-terms";
 import { useEffect, useState } from "react";
 
 const offerLogos: Partial<Record<string, string>> = {
@@ -15,6 +16,7 @@ type Dashboard = {
   referralUrl: string | null;
   offers: { id: string; name: string }[];
   isAdmin: boolean;
+  targetOfferId: string | null;
 };
 
 export default function Home() {
@@ -23,6 +25,7 @@ const [error, setError] = useState("");
 const [actionStatus, setActionStatus] = useState("");
 const [referralStatus, setReferralStatus] = useState("");
 const [opening, setOpening] = useState(false);
+const [expandedTerms, setExpandedTerms] = useState<Record<string, boolean>>({});
 
 async function openOffer(offerId: string) {
   const app = window.Telegram?.WebApp;
@@ -84,6 +87,7 @@ const tg = window.Telegram?.WebApp;
 
     if (!response.ok) throw new Error(result.error);
 
+    if (result.targetOfferId) setExpandedTerms({ [result.targetOfferId]: true });
     setData(result);
   } catch {
     setError("Couldn't sign in. Please try again.");
@@ -92,6 +96,17 @@ const tg = window.Telegram?.WebApp;
 
 init();
 }, []);
+
+const targetOfferId = data?.targetOfferId;
+useEffect(() => {
+  if (!targetOfferId) return;
+  const frame = requestAnimationFrame(() => {
+    const card = document.getElementById("offer-" + targetOfferId);
+    card?.focus({ preventScroll: true });
+    card?.scrollIntoView({ block: "start" });
+  });
+  return () => cancelAnimationFrame(frame);
+}, [targetOfferId]);
 
 if (error) {
 return <main style={{ padding: 30 }}>{error}</main>;
@@ -111,15 +126,14 @@ Welcome, {data.profile.name || "Partner"}!
 </header>
 
 
-  <DailyRewards />
-
   <h2 style={{ marginTop: 30 }}>The best casinos</h2>
 
   {actionStatus && <p role="status">{actionStatus}</p>}
   {data.offers.length === 0 && <p>There are no active offers right now.</p>}
 
   {data.offers.map((offer) => (
-    <section key={offer.id} style={offerCard}>
+    <section key={offer.id} id={"offer-" + offer.id} tabIndex={-1}
+      aria-label={offer.name} style={{ ...offerCard, scrollMarginTop: 16 }}>
       <div>
         <h3>{offer.name}</h3>
         <button disabled={opening} onClick={() => openOffer(offer.id)} style={button}>
@@ -139,6 +153,17 @@ Welcome, {data.profile.name || "Partner"}!
           onError={event => { event.currentTarget.style.visibility = "hidden"; }}
         />
       )}
+      <details open={expandedTerms[offer.id] ?? false}
+        onToggle={event => {
+          const open = event.currentTarget.open;
+          setExpandedTerms(current => (current[offer.id] ?? false) === open
+            ? current
+            : { ...current, [offer.id]: open });
+        }}
+        style={{ gridColumn: "1 / -1", borderTop: "1px solid #425566", paddingTop: 12 }}>
+        <summary style={{ cursor: "pointer" }}>Bonus terms</summary>
+        <BonusTerms offerId={offer.id} />
+      </details>
     </section>
   ))}
 
@@ -174,6 +199,8 @@ Welcome, {data.profile.name || "Partner"}!
       </Link>
     </section>
   )}
+
+  <DailyRewards />
 
   <footer style={{ color: "#8293A2", marginTop: 35, fontSize: 12 }}>
     18+ · Play responsibly · Offer availability and legal restrictions vary by country.

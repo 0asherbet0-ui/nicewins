@@ -102,3 +102,12 @@
   text-align: center;
   font-size: .875rem;
 }
+
+.summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.summary + .navigation {
+  margin-top: 14px;
+}

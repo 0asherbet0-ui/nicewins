@@ -1,7 +1,7 @@
 import { randomBytes } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { ADMIN_ID, getDb } from "../../../lib/server";
-import { campaignFromStartParam } from "../../../lib/campaign";
+import { campaignFromStartParam, offerFromCampaign } from "../../../lib/campaign";
 import { verifyTelegram } from "../../../lib/telegram";
 
 export const runtime = "nodejs";
@@ -71,7 +71,10 @@ export async function POST(req: NextRequest) {
       ? `${miniAppUrl.replace(/\/$/, "")}?startapp=${encodeURIComponent(profile.referral_code)}`
       : null;
 
+    const targetOffer = offerFromCampaign(campaign);
+
     return NextResponse.json({
+      targetOfferId: offers.data?.some(offer => offer.id === targetOffer) ? targetOffer : null,
       profile: { name: profile.first_name, referralCode: profile.referral_code, clicks: clicks.count ?? 0 },
       offers: offers.data,
       referralUrl,

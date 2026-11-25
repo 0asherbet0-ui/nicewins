@@ -84,44 +84,47 @@ export default function DailyRewards() {
       <p className={styles.balance} role="status">
         NiceWins points <strong>{rewards ? rewards.balance.toLocaleString() : "—"}</strong>
       </p>
-      <nav className={styles.navigation} aria-label="Rewards sections">
-        <button type="button" aria-pressed={!store} disabled={busy} onClick={() => setStore(false)}>Daily Wheel</button>
-        <button type="button" aria-pressed={store} disabled={busy} onClick={() => setStore(true)}>Store</button>
-      </nav>
-      {error && <p role="alert">{error} <button type="button" onClick={() => void load()}>Refresh</button></p>}
-      {store ? (
-        <p>Point redemption is coming soon.</p>
-      ) : rewards && (
-        <>
-          <div className={styles.wheelFrame} aria-hidden="true">
-            <div className={styles.pointer} />
-            <div ref={wheel} className={styles.wheel} style={{
-              transform: `rotate(${-(segments.find(segment => segment.points === rewards.reward)?.angle ?? 0)}deg)`,
-            }}>
-              {segments.map(segment => (
-                <span key={segment.points} className={styles.wheelLabel}
-                  style={{
-                    background: segment.color,
-                    transform: `rotate(${segment.angle}deg) translateY(-145%) rotate(${-segment.angle}deg)`,
-                  }}>
-                  {segment.points}
-                </span>
-              ))}
+      <details>
+        <summary className={styles.summary}>Bonus Wheel</summary>
+        <nav className={styles.navigation} aria-label="Rewards sections">
+          <button type="button" aria-pressed={!store} disabled={busy} onClick={() => setStore(false)}>Daily Wheel</button>
+          <button type="button" aria-pressed={store} disabled={busy} onClick={() => setStore(true)}>Store</button>
+        </nav>
+        {error && <p role="alert">{error} <button type="button" onClick={() => void load()}>Refresh</button></p>}
+        {store ? (
+          <p>Point redemption is coming soon.</p>
+        ) : rewards && (
+          <>
+            <div className={styles.wheelFrame} aria-hidden="true">
+              <div className={styles.pointer} />
+              <div ref={wheel} className={styles.wheel} style={{
+                transform: `rotate(${-(segments.find(segment => segment.points === rewards.reward)?.angle ?? 0)}deg)`,
+              }}>
+                {segments.map(segment => (
+                  <span key={segment.points} className={styles.wheelLabel}
+                    style={{
+                      background: segment.color,
+                      transform: `rotate(${segment.angle}deg) translateY(-145%) rotate(${-segment.angle}deg)`,
+                    }}>
+                    {segment.points}
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
-          <p className={styles.odds}>50 pts · 65% &nbsp; 100 pts · 25% &nbsp; 200 pts · 10%</p>
-          {rewards.reward === null ? (
-            <button type="button" disabled={busy} onClick={() => void load(rewards.day)}>
-              {busy ? "Spinning…" : "Spin the wheel"}
-            </button>
-          ) : (
-            <>
-              <p role="status" className={styles.reward}>You earned {rewards.reward} points!</p>
-              <p>Next spin in {countdown}</p>
-            </>
-          )}
-        </>
-      )}
+            <p className={styles.odds}>50 pts · 65% &nbsp; 100 pts · 25% &nbsp; 200 pts · 10%</p>
+            {rewards.reward === null ? (
+              <button type="button" disabled={busy} onClick={() => void load(rewards.day)}>
+                {busy ? "Spinning…" : "Spin the wheel"}
+              </button>
+            ) : (
+              <>
+                <p role="status" className={styles.reward}>You earned {rewards.reward} points!</p>
+                <p>Next spin in {countdown}</p>
+              </>
+            )}
+          </>
+        )}
+      </details>
       {!rewards && busy && <p role="status">Loading points…</p>}
     </section>
   );
